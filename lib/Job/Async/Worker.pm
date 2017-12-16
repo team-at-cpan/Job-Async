@@ -5,9 +5,26 @@ use warnings;
 
 use parent qw(IO::Async::Notifier);
 
+# VERSION
+
+=head1 NAME
+
+Job::Async::Worker - worker API for L<Job::Async>
+
+=head1 DESCRIPTION
+
+This is the thing that receives jobs, does the work, and sends
+back a result.
+
+=cut
+
 use Ryu::Async;
 
 use Job::Async::Job;
+
+=head1 METHODS
+
+=cut
 
 sub jobs {
     my ($self) = @_;
@@ -16,6 +33,17 @@ sub jobs {
             label => 'jobs'
         )
     };
+}
+
+sub id { shift->{id} //= Job::Async::Utils::uuid() }
+sub timeout { shift->{timeout} }
+
+sub configure {
+    my ($self, %args) = @_;
+    for my $k (qw(id timeout)) {
+        $self->{$k} = delete $args{$k} if exists $args{$k};
+    }
+    return $self->next::method(%args);
 }
 
 sub stop {
@@ -35,4 +63,12 @@ sub ryu {
 }
 
 1;
+
+=head1 AUTHOR
+
+Tom Molesworth <TEAM@cpan.org>
+
+=head1 LICENSE
+
+Copyright Tom Molesworth 2016-2017. Licensed under the same terms as Perl itself.
 

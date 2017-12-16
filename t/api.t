@@ -4,51 +4,8 @@ use warnings;
 use Test::More;
 use IO::Async::Loop;
 
-my @pending_jobs;
-{
-    package Job::Async::Worker::Memory;
-    use parent qw(Job::Async::Worker);
-    use Future::Utils qw(repeat);
-    sub start {
-        my ($self) = @_;
-    }
-    sub trigger {
-        my ($self) = @_;
-        $self->{active} ||= (repeat {
-            my $loop = $self->loop;
-            my $f = $loop->new_future;
-            $self->loop->later(sub {
-                if(my $job = shift @pending_jobs) {
-                    $self->process($job);
-                }
-                $f->done;
-            });
-            $f;
-        } while => sub { 0+@pending_jobs })->on_ready(sub {
-            delete $self->{active}
-        })
-    }
-    sub process {
-        my ($self, $job) = @_;
-        $self->jobs->emit($job);
-    }
-}
-{
-    package Job::Async::Client::Memory;
-    use parent qw(Job::Async::Client);
-    sub start {
-        my ($self) = @_;
-    }
-    sub submit {
-        my ($self, %args) = @_;
-        push @pending_jobs, my $job = Job::Async::Job->new(
-            data => $args{data},
-            id => rand(1e9),
-            future => $self->loop->new_future,
-        );
-        $job->future
-    }
-}
+use Job::Async::Client::Memory;
+use Job::Async::Worker::Memory;
 
 subtest api => sub {
     my $loop = IO::Async::Loop->new;
@@ -67,17 +24,16 @@ subtest api => sub {
     });
     is($seen, 0, 'no jobs yet');
     ok(my $job = $client->submit(
-        data => {
-            x => 1,
-            y => 2
-        }
+        x => 1,
+        y => 2
     ), 'can submit a job');
-    isa_ok($job, 'Future');
+    isa_ok($job, 'Job::Async::Job');
+    isa_ok($job->future, 'Future');
     is($seen, 0, 'worker has not yet been triggered');
     ok(!$job->is_ready, '... and the job is still pending');
     $worker->trigger;
     Future->needs_any(
-        $job,
+        $job->future,
         $loop->timeout_future(after => 1)
     )->get;
     is($seen, 1, 'worker saw the job');
