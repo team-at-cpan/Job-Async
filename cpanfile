@@ -6,6 +6,7 @@ requires 'Ryu::Async', '>= 0.006';
 requires 'List::Util', '>= 1.29';
 requires 'namespace::clean', 0;
 requires 'Log::Any', '>= 1.050';
+requires 'Math::Random::Secure', 0;
 
 requires 'JSON::MaybeUTF8', '>= 1.000';
 
