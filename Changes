@@ -2,6 +2,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.002     2018-01-02 00:54:36+08:00 Asia/Kuala_Lumpur
     No new features.
 
     Dependency fixes:
