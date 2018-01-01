@@ -2,6 +2,11 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    No new features.
+
+    Dependency fixes:
+
+    - Declare explicit dep on Math::Random::Secure, for UUID generation
 
 0.001     2017-12-29 20:28:25+08:00 Asia/Kuala_Lumpur
     Initial release. May include some new features.
