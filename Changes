@@ -2,6 +2,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.003     2019-02-27 13:55:17+08:00 Asia/Kuala_Lumpur
     New features:
 
     - support for Sereal encoding on parameters, you can now select between plain text, JSON and Sereal
