@@ -115,7 +115,7 @@ The main feature missing from the other alternatives is job completion notificat
 
 =over 4
 
-=item * L<Gearman> - venerable contender for background job handling, usually database-backed 
+=item * L<Gearman> - venerable contender for background job handling, usually database-backed
 
 =item * L<TheScwhartz> - reliable job queuing, database-backed again
 
